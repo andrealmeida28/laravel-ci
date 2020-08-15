@@ -30,7 +30,7 @@ steps:
     name: 'gcr.io/cloud-builders/docker'
     args: ['exec','-t', 'app', 'php', '/var/www/artisan' , 'migrate', '--no-interaction', '--force']
 
--   id: "Rodando php unit"
+-   id: "Rodando Phpunit"
     name: 'gcr.io/cloud-builders/docker'
     args: ['exec','-t', 'app', 'php', '/var/www/vendor/bin/phpunit' , '-c', '/var/www/phpunit.xml']
 
