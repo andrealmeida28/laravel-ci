@@ -1,5 +1,15 @@
 steps:
 
-- id: "Rodando Docker Compose"
-  name: 'gcr.io/$PROJECT_ID/docker-compose'
-  args: ['-f','docker-compose.cloudbuild.yaml', 'up', '-d']
+-   id: "Rodando docker-compose"
+    name: 'gcr.io/$PROJECT_ID/docker-compose:1.24.0'
+    args: ['-f','docker-compose.prod.yaml','up','-d']
+
+#adicione este step depois do up -d
+
+-   id: "Chown in /var/www"
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['exec','-u','root','-t','app','chown','-R','www-data:www-data','/var/www']
+
+-   id: "Rodando docker ps"
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['ps']
