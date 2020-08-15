@@ -23,7 +23,7 @@ services:
         container_name: nginx
         entrypoint: dockerize -template ./docker/nginx/nginx.conf.temp:./docker/nginx/nginx.conf
         environment:
-            - NGINX_HOST=asdasds
+            - NGINX_HOST=app
             - NGINX_PORT=9000
         restart: always
         tty: true
