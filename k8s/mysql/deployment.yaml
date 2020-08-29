@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-server
+  
+spec: #spec do deployment
+  selector: #selector utilizado para criar o service
+    matchLabels:
+      app: mysql-server
+      tier: db
+  replicas: 1 
+
+  template: #refere-se aos pods
+    metadata: 
+      labels: 
+        app: mysql-server
+        tier: db
+    spec: #spec do pod
+      containers:
+      - name: mysql-server
+        image: mysql:5.7
+        #Mysql exige que a pasta esteja vazia, porem em alguns casos ve esse arquivo LOST FOUND ou outros
+        #ao criar um volume na nuvem, entao mandamos o mysql ignorar ao criar o db
+        args: 
+          - "--ignore-db-dir=lost+found" 
+        env: 
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom: 
+            secretKeyRef:
+              #kubectl create secret generic mysql-pass --from-literal=password='a1s2d3f4'
+              name: mysql-pass
+              key: password
+        ports:
+        - containerPort: 3306
+        volumeMounts: #monta o volume efetivamente
+          - name: mysql-persistent-storage
+            mountPath: /var/lib/mysql
+      
+      volumes: #definicao do volume 
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mysql-pv-claim
