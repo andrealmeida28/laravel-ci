@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql-server
-  
 spec: #spec do deployment
   selector: #selector utilizado para criar o service
     matchLabels:
@@ -17,6 +16,9 @@ spec: #spec do deployment
         tier: db
     spec: #spec do pod
       containers:
+      #ALTER USER 'root'@'localhost' IDENTIFIED BY 'a1s2d3f4';
+      #GRANT ALL PRIVILEGES ON *.* TO 'root@'%'' IDENTIFIED BY 'a1s2d3f4' WITH GRANT OPTION;
+      #Foi necessario dar permissao no root e setar manualmente o password como 'a1s2d3f4'
       - name: mysql-server
         image: mysql:5.7
         #Mysql exige que a pasta esteja vazia, porem em alguns casos ve esse arquivo LOST FOUND ou outros
