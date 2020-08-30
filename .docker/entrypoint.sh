@@ -1,6 +1,6 @@
 #!/bin/bash
 
-composer install
+RUN composer install 
 php artisan key:generate
 php artisan migrate
 php-fpm
