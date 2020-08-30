@@ -11,36 +11,34 @@ spec:
     metadata:
       labels:
         app: app
-
     spec:
       containers:
       - name: app
         image: img-app-deployment
-        command: ["/bin/sh", "-c", "ln -s /var/www /usr/share/nginx; /var/www/k8s/entrypoint.sh; php-fpm;"]
+        command:
+          - "/bin/sh"
+          - "-c"
+          - "ln -s /var/www /usr/share/nginx; chmod -R 777 /var/www/k8s/; /var/www/k8s/entrypoint.sh; php-fpm;"
         ports:
         - containerPort: 80
-
-        env:
+        env: 
         - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
+          valueFrom: 
+            secretKeyRef: 
               name: mysql-pass
               key: password
-
-        envFrom:
+        envFrom: 
         - configMapRef:
             name: app-conf
-
         volumeMounts:
-        - mountPath: /var/www/.env
-          subPath: .env
-          name: app-conf
-          readOnly: true
-
-      volumes:
         - name: app-conf
-          configMap:
-            name: app-conf
-            items:
-              - key: env
-                path: .env
+          mountPath: /var/www/.env
+          subPath: .env
+          #readOnly: true
+      volumes:
+      - name: app-conf
+        configMap:
+          name: app-conf
+          items:
+          - key: env
+            path: .env
