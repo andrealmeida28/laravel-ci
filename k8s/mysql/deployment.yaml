@@ -1,44 +1,43 @@
-apiVersion: apps/v1
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
   name: mysql-server
-spec: #spec do deployment
-  selector: #selector utilizado para criar o service
+spec:
+  replicas: 1
+
+  selector:
     matchLabels:
       app: mysql-server
       tier: db
-  replicas: 1 
 
-  template: #refere-se aos pods
-    metadata: 
-      labels: 
+  template:
+    metadata:
+      labels:
         app: mysql-server
-        tier: db
-    spec: #spec do pod
+        tier: db 
+    spec:
       containers:
-      #ALTER USER 'root'@'localhost' IDENTIFIED BY 'a1s2d3f4';
-      #GRANT ALL PRIVILEGES ON *.* TO 'root@'%'' IDENTIFIED BY 'a1s2d3f4' WITH GRANT OPTION;
-      #Foi necessario dar permissao no root e setar manualmente o password como 'a1s2d3f4'
-      - name: mysql-server
-        image: mysql:5.7
-        #Mysql exige que a pasta esteja vazia, porem em alguns casos ve esse arquivo LOST FOUND ou outros
-        #ao criar um volume na nuvem, entao mandamos o mysql ignorar ao criar o db
-        args: 
-          - "--ignore-db-dir=lost+found" 
-        env: 
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom: 
-            secretKeyRef:
-              #kubectl create secret generic mysql-pass --from-literal=password='a1s2d3f4'
-              name: mysql-pass
-              key: password
-        ports:
-        - containerPort: 3306
-        volumeMounts: #monta o volume efetivamente
-          - name: mysql-persistent-storage
-            mountPath: /var/lib/mysql
-      
-      volumes: #definicao do volume 
+        - image: mysql:5.7
+          name: mysql-server
+          args:
+            - "--ignore-db-dir=lost+found"
+
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mysql-pass
+              # value: root
+
+          ports:
+            - containerPort: 3306
+
+          volumeMounts: #monta o volume efetivamente
+            - mountPath: /var/lib/mysql
+              name: mysql-persistent-storage
+
+      volumes: #definição do volume
         - name: mysql-persistent-storage
           persistentVolumeClaim:
             claimName: mysql-pv-claim
