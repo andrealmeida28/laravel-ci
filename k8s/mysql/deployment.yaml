@@ -39,6 +39,6 @@ spec: #spec do deployment
             mountPath: /var/lib/mysql
       
       volumes: #definicao do volume 
-        - name: mysql-persistent-storage
-          persistentVolumeClaim:
-            claimName: mysql-pv-claim
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
